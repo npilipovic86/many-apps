@@ -1,0 +1,103 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-purple-600 py-12 px-4">
+  <div class="max-w-2xl mx-auto">
+    <!-- Search Card -->
+    <div class="bg-white rounded-3xl shadow-2xl p-8 mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Vremenska Prognoza</h2>
+
+      <form (ngSubmit)="searchWeather()" class="flex gap-3">
+        <input type="text" [(ngModel)]="place" name="place" placeholder="Unesite naziv grada..."
+          class="flex-1 px-6 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-lg transition-colors duration-200"
+          [disabled]="isLoading()" />
+        <button type="submit" [disabled]="isLoading() || !place.trim()"
+          class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold px-8 py-4 rounded-xl transition-colors duration-200 flex items-center gap-2">
+          <svg *ngIf="!isLoading()" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <svg *ngIf="isLoading()" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          {{ isLoading() ? 'Učitavanje...' : 'Pretraži' }}
+        </button>
+      </form>
+
+      <!-- Error Message -->
+      <div *ngIf="error()" class="mt-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd" />
+          </svg>
+          <span>{{ error() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weather Result Card -->
+    <div *ngIf="weather()"
+      class="bg-gradient-to-br from-blue-600 to-purple-700 backdrop-blur-lg rounded-3xl shadow-2xl p-8 text-white">
+      <div class="text-center">
+        <!-- City Name -->
+        <h3 class="text-4xl font-bold mb-2">{{ weather()!.city }}</h3>
+        <p class="text-xl opacity-90 capitalize mb-6">{{ weather()!.description }}</p>
+
+        <!-- Weather Icon & Temperature -->
+        <div class="flex items-center justify-center mb-8">
+          <img [src]="'https:' + weather()!.icon" [alt]="weather()!.description" class="w-32 h-32" />
+          <div class="text-8xl font-bold">
+            {{ weather()!.temperature }}°C
+          </div>
+        </div>
+
+        <!-- Weather Details Grid -->
+        <div class="grid grid-cols-2 gap-6 mt-8">
+          <!-- Humidity -->
+          <div class=" rounded-2xl p-6">
+            <div class="flex items-center justify-center mb-2">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+              </svg>
+            </div>
+            <div class="text-3xl font-bold mb-1">{{ weather()!.humidity }}%</div>
+            <div class="text-sm opacity-80">Vlažnost</div>
+          </div>
+
+          <!-- Wind Speed -->
+          <div class=" rounded-2xl p-6">
+            <div class="flex items-center justify-center mb-2">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+            <div class="text-3xl font-bold mb-1">{{ weather()!.windSpeed }}</div>
+            <div class="text-sm opacity-80">Vetar (m/s)</div>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="mt-8 pt-6 border-t border-white border-opacity-30">
+          <p class="text-sm opacity-80">
+            Poslednje ažurirano: {{ currentTime }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!weather() && !isLoading() && !error()"
+      class="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl shadow-2xl p-12 text-white text-center">
+      <svg class="w-24 h-24 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+      </svg>
+      <h3 class="text-2xl font-semibold mb-2">Pretražite vreme</h3>
+      <p class="opacity-80">Unesite naziv grada da vidite trenutnu vremensku prognozu</p>
+    </div>
+  </div>
+</div>

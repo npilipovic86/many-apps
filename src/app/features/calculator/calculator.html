@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12 px-4">
+  <div class="max-w-md mx-auto">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+        <h2 class="text-3xl font-bold text-white text-center">Kalkulator</h2>
+      </div>
+
+      <!-- Display -->
+      <div class="bg-gray-900 p-6">
+        <div class="text-right">
+          <div class="text-gray-400 text-sm mb-1 h-6">
+            {{ currentOperation() || '&nbsp;' }}
+          </div>
+          <div class="text-white text-5xl font-light tracking-wider overflow-hidden">
+            {{ display() }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="p-6">
+        <div class="grid grid-cols-4 gap-3">
+          <!-- Row 1 -->
+          <button
+            (click)="onClear()"
+            class="col-span-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-6 rounded-xl text-xl transition-colors duration-200 active:scale-95 transform">
+            AC
+          </button>
+          <button
+            (click)="onDelete()"
+            class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-xl text-xl transition-colors duration-200 active:scale-95 transform">
+            DEL
+          </button>
+          <button
+            (click)="onOperationClick('/')"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            ÷
+          </button>
+
+          <!-- Row 2 -->
+          <button
+            (click)="onNumberClick('7')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            7
+          </button>
+          <button
+            (click)="onNumberClick('8')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            8
+          </button>
+          <button
+            (click)="onNumberClick('9')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            9
+          </button>
+          <button
+            (click)="onOperationClick('*')"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            ×
+          </button>
+
+          <!-- Row 3 -->
+          <button
+            (click)="onNumberClick('4')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            4
+          </button>
+          <button
+            (click)="onNumberClick('5')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            5
+          </button>
+          <button
+            (click)="onNumberClick('6')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-2xl py-6 rounded-xl transition-colors duration-200 active:scale-95 transform">
+            6
+          </button>
+          <button
+            (click)="onOperationClick('-')"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            −
+          </button>
+
+          <!-- Row 4 -->
+          <button
+            (click)="onNumberClick('1')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            1
+          </button>
+          <button
+            (click)="onNumberClick('2')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            2
+          </button>
+          <button
+            (click)="onNumberClick('3')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            3
+          </button>
+          <button
+            (click)="onOperationClick('+')"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            +
+          </button>
+
+          <!-- Row 5 -->
+          <button
+            (click)="onNumberClick('0')"
+            class="col-span-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            0
+          </button>
+          <button
+            (click)="onNumberClick('.')"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            .
+          </button>
+          <button
+            (click)="onEqualsClick()"
+            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-6 rounded-xl text-2xl transition-colors duration-200 active:scale-95 transform">
+            =
+          </button>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div *ngIf="history().length > 0" class="border-t border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Istorija</h3>
+        <div class="space-y-2 max-h-40 overflow-y-auto">
+          <div *ngFor="let calc of history()" class="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+            {{ calc.operand1 }} {{ calc.operation }} {{ calc.operand2 }} = {{ calc.result }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
