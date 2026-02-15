@@ -7,7 +7,7 @@ export class WeatherService {
   private apiKey = '3f613894a41b441a9e0141822261202';
   private apiUrl = 'https://api.weatherapi.com/v1/current.json';
 
-  readonly city = signal<string>(this.getCity());
+  readonly city = signal<string | null>(this.getCity());
 
   readonly weatherResource = resource({
     params: () => ({ city: this.city() }),
