@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalculatorService } from './services/calculator';
 import { CalculatorState } from './state/calculator-state';
@@ -8,7 +8,8 @@ import { CalculatorState } from './state/calculator-state';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './calculator.html',
-  styleUrl: './calculator.css'
+  styleUrl: './calculator.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalculatorComponent {
 

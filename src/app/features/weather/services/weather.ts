@@ -1,21 +1,38 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Injectable, resource, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
-  private http = inject(HttpClient);
   private apiKey = '3f613894a41b441a9e0141822261202';
   private apiUrl = 'https://api.weatherapi.com/v1/current.json';
 
-  getWeather(city: string): Observable<any> {
-    const url = `${this.apiUrl}?key=${this.apiKey}&q=${city}&lang=sr`
-    return this.http.get(url);
+  readonly city = signal<string>(this.getCity());
+
+  readonly weatherResource = resource({
+    params: () => ({ city: this.city() }),
+    loader: async ({ params, abortSignal }) => {
+      if (!params.city) return null;
+      const url = `${this.apiUrl}?key=${this.apiKey}&q=${params.city}&lang=sr`;
+      const response = await fetch(url, { signal: abortSignal });
+      if (!response.ok) {
+        throw new Error('Grad nije pronađen ili se desila greška');
+      }
+      const data = await response.json();
+      return this.transformWeatherData(data);
+    }
+  });
+
+  readonly weather = this.weatherResource.value;
+  readonly isLoading = this.weatherResource.isLoading;
+  readonly error = this.weatherResource.error;
+
+  updateCity(city: string) {
+    this.saveCity(city);
+    this.city.set(city);
   }
 
-  transformWeatherData(data: any) {
+  private transformWeatherData(data: any) {
     return {
       city: data.location.name,
       temperature: Math.round(data.current.temp_c),
@@ -26,13 +43,11 @@ export class WeatherService {
     };
   }
 
-  saveCity(city: string): void {
-
+  private saveCity(city: string): void {
     localStorage.setItem('weather-city', city);
   }
 
-  getCity(): string {
-
-    return localStorage.getItem('weather-city') || '';
+  private getCity(): string | null {
+    return localStorage.getItem('weather-city');
   }
 }
